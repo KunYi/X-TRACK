@@ -24,11 +24,11 @@
 #define __VERSION_H
 
 /* Firmware Version */
-#define VERSION_FIRMWARE_NAME   "X-TRACK"
-#define VERSION_SOFTWARE        "v2.7"
+#define VERSION_FIRMWARE_NAME   "U.Falcon"
+#define VERSION_SOFTWARE        "v1.0"
 #define VERSION_HARDWARE        "v1.0"
-#define VERSION_AUTHOR_NAME     "_VIFEXTech"
-#define VERSION_PROJECT_LINK    "https://github.com/FASTSHIFT/X-TRACK"
+#define VERSION_AUTHOR_NAME     "UWings"
+#define VERSION_PROJECT_LINK    "https://github.com/KunYi/X-TRACK"
 
 /* Number to string macro */
 #define _VERSION_NUM_TO_STR_(n)  #n
