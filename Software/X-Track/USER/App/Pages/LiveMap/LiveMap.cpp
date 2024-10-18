@@ -206,6 +206,7 @@ void LiveMap::CheckPosition()
         gpsInfo.longitude, gpsInfo.latitude,
         &mapX, &mapY
     );
+
     Model.tileConv.SetFocusPos(mapX, mapY);
 
     if (GetIsMapTileContChanged())
@@ -217,7 +218,8 @@ void LiveMap::CheckPosition()
     {
         TileConv::Rect_t rect;
         Model.tileConv.GetTileContainer(&rect);
-
+        printf("[DBG]CheckPosition(), lat:%f, lng:%f\n", gpsInfo.latitude, gpsInfo.longitude);
+        printf("[DBG]CheckPosition(), x:%d, y:%d, z:%d\n", mapX, mapY, mapLevelCurrent);
         Area_t area =
         {
             .x0 = rect.x,
@@ -289,9 +291,9 @@ void LiveMap::MapTileContReload()
         TileConv::Point_t pos;
         Model.tileConv.GetTilePos(i, &pos);
 
-        char path[64];
+        char path[256];
         Model.mapConv.ConvertMapPath(pos.x, pos.y, path, sizeof(path));
-
+        printf("[DBG]tile path:%s\n", path);
         View.SetMapTileSrc(i, path);
     }
 }

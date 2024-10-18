@@ -124,10 +124,18 @@ void LiveMapView::SetMapTileSrc(uint32_t index, const char* src)
 {
     if (index >= ui.map.tileNum)
     {
+        printf("[DBG]SetMapTileSrcileSrc(), indxe:%d, tileNum:%d]\n",
+            index, ui.map.tileNum);
         return;
     }
 
     TILE_IMG_SET_SRC(ui.map.imgTiles[index], src);
+    // if( res != LV_RES_OK) {
+    //     printf("[DBG], Load Tile:%s failed\n", src);
+    // }
+    // else {
+    //     lv_obj_invalidate(ui.map.imgTiles[index]);
+    // }
 }
 
 void LiveMapView::SetArrowTheme(const char* theme)
