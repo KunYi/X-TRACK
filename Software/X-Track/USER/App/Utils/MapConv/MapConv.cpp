@@ -51,6 +51,7 @@ void MapConv::GetMapTile(double longitude, double latitude, MapTile_t* mapTile)
 {
     int32_t x, y;
     ConvertMapCoordinate(longitude, latitude, &x, &y);
+    printf("[DBG]:GetMapTile(), Pos:%f, %f, %d, %d\n", latitude, longitude, x, y);
     ConvertPosToTile(x, y, mapTile);
 }
 

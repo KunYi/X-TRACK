@@ -21,7 +21,7 @@ INCLUDE_CFG = -I$(LVGL_DIR)/ -I$(PROJECT_DIR)/USER/App -I$(PROJECT_DIR)/USER/App
 
 CFLAGS ?= 	-O3 -g0 $(INCLUDE_CFG) $(WARNING_CFG) \
 			-DLV_COLOR_DEPTH=32 -DLV_COLOR_16_SWAP=0 -DLV_FS_PC_PATH=\"../../../\" \
-			-DCONFIG_MAP_EXT_NAME_DEFAULT=\"png\"
+			-DCONFIG_MAP_EXT_NAME_DEFAULT=\"png\" -DCONFIG_MAP_IMG_PNG_ENABLE=1
 CXXFLAGS ?= $(CFLAGS)
 LDFLAGS ?= -lm -lstdc++ -lSDL2
 BIN = xtrack
@@ -38,7 +38,8 @@ CXXSRCS += $(shell find -L $(LVGL_DIR)/HAL -name "*.cpp")
 
 APP_CXXSRCS = $(shell find -L $(PROJECT_DIR)/USER/App -name "*.cpp")
 APP_FILTER_OUT += $(shell find -L $(PROJECT_DIR)/USER/App/Utils/ArduinoJson -name "*.cpp")
-APP_FILTER_OUT += $(shell find -L $(PROJECT_DIR)/USER/App/Utils/lv_img_png -name "*.cpp")
+#APP_FILTER_OUT += $(shell find -L $(PROJECT_DIR)/USER/App/Utils/lv_img_png -name "*.cpp")
+APP_FILTER_OUT += $(shell find -L $(PROJECT_DIR)/USER/App/Utils/lv_img_png/PNGdec/linux -name "*.cpp")
 
 CXXSRCS += $(filter-out $(APP_FILTER_OUT), $(APP_CXXSRCS))
 

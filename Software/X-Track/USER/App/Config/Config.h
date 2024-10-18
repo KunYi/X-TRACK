@@ -50,7 +50,7 @@
 #define CONFIG_TRACK_FILTER_OFFSET_THRESHOLD  2 // pixel
 #define CONFIG_TRACK_RECORD_FILE_DIR_NAME     "Track"
 
-#define CONFIG_MAP_USE_WGS84_DEFAULT          false
+#define CONFIG_MAP_USE_WGS84_DEFAULT          true
 #define CONFIG_MAP_DIR_PATH_DEFAULT           "/MAP"
 
 #ifndef CONFIG_MAP_EXT_NAME_DEFAULT
@@ -63,9 +63,9 @@
 
 #define CONFIG_ARROW_THEME_DEFAULT            "default"
 
-#define CONFIG_LIVE_MAP_LEVEL_DEFAULT         16
+#define CONFIG_LIVE_MAP_LEVEL_DEFAULT         14
 
-#define CONFIG_LIVE_MAP_DEBUG_ENABLE          0
+#define CONFIG_LIVE_MAP_DEBUG_ENABLE          1
 #if CONFIG_LIVE_MAP_DEBUG_ENABLE
 #  define CONFIG_LIVE_MAP_VIEW_WIDTH          240
 #  define CONFIG_LIVE_MAP_VIEW_HEIGHT         240

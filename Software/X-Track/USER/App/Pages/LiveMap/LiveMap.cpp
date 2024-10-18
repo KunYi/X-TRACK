@@ -43,7 +43,7 @@ void LiveMap::onViewLoad()
     View.SetMapTile(tileSize, rect.width / tileSize);
 
 #if CONFIG_LIVE_MAP_DEBUG_ENABLE
-    lv_obj_t* contView = lv_obj_create(root);
+    lv_obj_t* contView = lv_obj_create(_root);
     lv_obj_center(contView);
     lv_obj_set_size(contView, CONFIG_LIVE_MAP_VIEW_WIDTH, CONFIG_LIVE_MAP_VIEW_HEIGHT);
     lv_obj_set_style_border_color(contView, lv_palette_main(LV_PALETTE_RED), 0);
