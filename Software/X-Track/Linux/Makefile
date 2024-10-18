@@ -23,7 +23,7 @@ CFLAGS ?= 	-O3 -g0 $(INCLUDE_CFG) $(WARNING_CFG) \
 			-DLV_COLOR_DEPTH=32 -DLV_COLOR_16_SWAP=0 -DLV_FS_PC_PATH=\"../../../\" \
 			-DCONFIG_MAP_EXT_NAME_DEFAULT=\"png\"
 CXXFLAGS ?= $(CFLAGS)
-LDFLAGS ?= -lm -lstdc++
+LDFLAGS ?= -lm -lstdc++ -lSDL2
 BIN = xtrack
 
 #Collect the files to compile
@@ -65,10 +65,10 @@ all: default
 %.o: %.cpp
 	@$(CXX)  $(CXXFLAGS) -c $< -o $@
 	@echo "CXX $<"
-    
+
 default: $(AOBJS) $(COBJS) $(CXXOBJS) $(MAINOBJ)
 	$(CC) -o $(BIN) $(MAINOBJ) $(AOBJS) $(COBJS) $(CXXOBJS) $(LDFLAGS)
 
-clean: 
+clean:
 	rm -f $(BIN) $(AOBJS) $(COBJS) $(CXXOBJS) $(MAINOBJ)
 

@@ -1,12 +1,16 @@
-#include "lvgl/lvgl.h"
-#include "lv_drivers/display/fbdev.h"
-#include "lv_drivers/indev/evdev.h"
+
+#define _DEFAULT_SOURCE /* needed for usleep() */
+#include <stdlib.h>
 #include <unistd.h>
+#define SDL_MAIN_HANDLED /*To fix SDL's "undefined reference to WinMain" issue*/
+#include <SDL2/SDL.h>
+#include "lvgl/lvgl.h"
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "lv_drivers/sdl/sdl.h"
 
 #include "App.h"
 #include "Common/HAL/HAL.h"
@@ -18,13 +22,12 @@ extern "C" {
 
 static void hal_init(const char* evdev_path)
 {
-    /*Linux frame buffer device init*/
-    fbdev_init();
+    /* Use the 'monitor' driver which creates window on PC's monitor to simulate a display*/
+    sdl_init();
 
-    uint32_t width, height;
-    fbdev_get_sizes(&width, &height);
-
-    uint32_t disp_buf_size = width * height;
+    /*Create a display buffer*/
+    static lv_disp_draw_buf_t disp_buf1;
+    static uint32_t disp_buf_size = SDL_HOR_RES * SDL_VER_RES;
     lv_color_t* buf = (lv_color_t*)malloc(disp_buf_size * sizeof(lv_color_t));
 
     /*Initialize a descriptor for the buffer*/
@@ -35,39 +38,52 @@ static void hal_init(const char* evdev_path)
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.draw_buf   = &disp_buf;
-    disp_drv.flush_cb   = fbdev_flush;
-    disp_drv.hor_res    = width;
-    disp_drv.ver_res    = height;
+    disp_drv.flush_cb   = sdl_display_flush;
+    disp_drv.hor_res    = SDL_HOR_RES;
+    disp_drv.ver_res    = SDL_VER_RES;
     lv_disp_drv_register(&disp_drv);
 
-    /*Input device*/
-    evdev_init();
+    lv_group_t * g = lv_group_create();
+    lv_group_set_default(g);
 
-    printf("evdev path: %s\n", evdev_path);
-    evdev_set_file((char*)evdev_path);
+    /* Add the mouse as input device
+    * Use the 'mouse' driver which reads the PC's mouse*/
+   static lv_indev_drv_t indev_drv_1;
+   lv_indev_drv_init(&indev_drv_1); /*Basic initialization*/
+   indev_drv_1.type = LV_INDEV_TYPE_POINTER;
 
-    static lv_indev_drv_t indev_drv;
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = evdev_read;
-    lv_indev_t* indev = lv_indev_drv_register(&indev_drv);
+   /*This function will be called periodically (by the library) to get the mouse position and state*/
+   indev_drv_1.read_cb = sdl_mouse_read;
+   lv_indev_t *mouse_indev = lv_indev_drv_register(&indev_drv_1);
 
-    lv_group_t* group = lv_group_create();
-    lv_indev_set_group(indev, group);
-    lv_group_set_default(group);
+   static lv_indev_drv_t indev_drv_2;
+   lv_indev_drv_init(&indev_drv_2); /*Basic initialization*/
+   indev_drv_2.type = LV_INDEV_TYPE_KEYPAD;
+   indev_drv_2.read_cb = sdl_keyboard_read;
+   lv_indev_t *kb_indev = lv_indev_drv_register(&indev_drv_2);
+   lv_indev_set_group(kb_indev, g);
 
-    lv_obj_t * cursor_obj = lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
-    lv_img_set_src(cursor_obj, &mouse_cursor_icon);           /*Set the image source*/
-    lv_indev_set_cursor(indev, cursor_obj);             /*Connect the image  object to the driver*/
+   static lv_indev_drv_t indev_drv_3;
+   lv_indev_drv_init(&indev_drv_3); /*Basic initialization*/
+   indev_drv_3.type = LV_INDEV_TYPE_ENCODER;
+   indev_drv_3.read_cb = sdl_mousewheel_read;
+   lv_indev_t * enc_indev = lv_indev_drv_register(&indev_drv_3);
+   lv_indev_set_group(enc_indev, g);
+
+   /*Set a cursor for the mouse*/
+   LV_IMG_DECLARE(mouse_cursor_icon); /*Declare the image file.*/
+   lv_obj_t * cursor_obj = lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
+   lv_img_set_src(cursor_obj, &mouse_cursor_icon);           /*Set the image source*/
+   lv_indev_set_cursor(mouse_indev, cursor_obj);             /*Connect the image  object to the driver*/         /*Connect the image  object to the driver*/
 }
 
 int main(int argc, const char* argv[])
 {
-    if(argc != 2)
-    {
-        printf("input event device path\n");
-        return -1;
-    }
+    // if(argc != 2)
+    // {
+    //     printf("input event device path\n");
+    //     return -1;
+    // }
     /*LittlevGL init*/
     lv_init();
 
@@ -75,7 +91,7 @@ int main(int argc, const char* argv[])
 
     hal_init(argv[1]);
 
-    HAL::HAL_Init();  
+    HAL::HAL_Init();
 
     App_Init();
 

@@ -80,8 +80,42 @@
  *********************/
 
 /*-------------------
+ *  SDL
+ *-------------------*/
+
+/* SDL based drivers for display, mouse, mousewheel and keyboard*/
+#ifndef USE_SDL
+# define USE_SDL 01
+#endif
+
+/* Hardware accelerated SDL driver */
+#ifndef USE_SDL_GPU
+# define USE_SDL_GPU 0
+#endif
+
+#if USE_SDL || USE_SDL_GPU
+#  define SDL_HOR_RES     480
+#  define SDL_VER_RES     320
+
+/* Scale window by this factor (useful when simulating small screens) */
+#  define SDL_ZOOM        1
+
+/* Used to test true double buffering with only address changing.
+ * Use 2 draw buffers, bith with SDL_HOR_RES x SDL_VER_RES size*/
+#  define SDL_DOUBLE_BUFFERED 0
+
+/*Eclipse: <SDL2/SDL.h>    Visual Studio: <SDL.h>*/
+#  define SDL_INCLUDE_PATH    <SDL2/SDL.h>
+
+/*Open two windows to test multi display support*/
+#  define SDL_DUAL_DISPLAY            0
+#endif
+
+/*-------------------
  *  Monitor of PC
  *-------------------*/
+
+/*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MONITOR
 #  define USE_MONITOR         0
 #endif
@@ -120,7 +154,7 @@
  *  Native Windows (win32drv)
  *---------------------------*/
 #ifndef USE_WIN32DRV
-#  define USE_WIN32DRV       1
+#  define USE_WIN32DRV       0
 #endif
 
 #if USE_WIN32DRV
@@ -272,7 +306,7 @@
  *  Linux frame buffer device (/dev/fbx)
  *-----------------------------------------*/
 #ifndef USE_FBDEV
-#  define USE_FBDEV           1
+#  define USE_FBDEV           0
 #endif
 
 #if USE_FBDEV
@@ -386,7 +420,7 @@
  * Mouse or touchpad as evdev interface (for Linux based systems)
  *------------------------------------------------*/
 #ifndef USE_EVDEV
-#  define USE_EVDEV           1
+#  define USE_EVDEV           0
 #endif
 
 #ifndef USE_BSD_EVDEV
