@@ -5,15 +5,16 @@
 
 using namespace Page;
 
-#if CONFIG_MAP_IMG_PNG_ENABLE
-#include "Utils/lv_img_png/lv_img_png.h"
-#  define TILE_IMG_CREATE  lv_img_png_create
-#  define TILE_IMG_SET_SRC lv_img_png_set_src
-#else
+// #if CONFIG_MAP_IMG_PNG_ENABLE
+// #include "Utils/lv_img_png/lv_img_png.h"
+// #  define TILE_IMG_CREATE  lv_img_png_create
+// #  define TILE_IMG_SET_SRC lv_img_png_set_src
+// #else
+// #  define TILE_IMG_CREATE  lv_img_create
+// #  define TILE_IMG_SET_SRC lv_img_set_src
+// #endif
 #  define TILE_IMG_CREATE  lv_img_create
 #  define TILE_IMG_SET_SRC lv_img_set_src
-#endif
-
 void LiveMapView::Create(lv_obj_t* root, uint32_t tileNum)
 {
     lv_obj_set_style_bg_color(root, lv_color_white(), 0);
@@ -130,12 +131,6 @@ void LiveMapView::SetMapTileSrc(uint32_t index, const char* src)
     }
 
     TILE_IMG_SET_SRC(ui.map.imgTiles[index], src);
-    // if( res != LV_RES_OK) {
-    //     printf("[DBG], Load Tile:%s failed\n", src);
-    // }
-    // else {
-    //     lv_obj_invalidate(ui.map.imgTiles[index]);
-    // }
 }
 
 void LiveMapView::SetArrowTheme(const char* theme)

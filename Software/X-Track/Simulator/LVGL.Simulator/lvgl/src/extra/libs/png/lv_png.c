@@ -95,7 +95,9 @@ static lv_res_t decoder_info(struct _lv_img_decoder_t * decoder, const void * sr
             /*The width and height are stored in Big endian format so convert them to little endian*/
             header->w = (lv_coord_t)((size[0] & 0xff000000) >> 24) + ((size[0] & 0x00ff0000) >> 8);
             header->h = (lv_coord_t)((size[1] & 0xff000000) >> 24) + ((size[1] & 0x00ff0000) >> 8);
-
+            header->w = 256;
+            header->h = 256;
+            printf("[DBG] png decder_info: %s passed, w:%d, h:%d\n", fn, header->w, header->h);
             return LV_RES_OK;
         }
     }

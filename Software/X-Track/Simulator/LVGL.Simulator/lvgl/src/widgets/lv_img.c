@@ -129,6 +129,7 @@ void lv_img_set_src(lv_obj_t * obj, const void * src)
             if(new_str == NULL) return;
             strcpy(new_str, src);
             img->src = new_str;
+            printf("[DBG] lv_img_set_src: %s\n", new_str);
 
             if(old_src) lv_mem_free((void *)old_src);
         }
