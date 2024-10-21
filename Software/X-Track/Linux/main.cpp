@@ -14,7 +14,6 @@
 
 #include "App.h"
 #include "Common/HAL/HAL.h"
-#include "lv_fs_if/lv_fs_if.h"
 
 extern "C" {
     LV_IMG_DECLARE(mouse_cursor_icon); /*Declare the image file.*/
@@ -79,15 +78,8 @@ static void hal_init(const char* evdev_path)
 
 int main(int argc, const char* argv[])
 {
-    // if(argc != 2)
-    // {
-    //     printf("input event device path\n");
-    //     return -1;
-    // }
     /*LittlevGL init*/
     lv_init();
-
-    lv_fs_if_init();
 
     hal_init(argv[1]);
 

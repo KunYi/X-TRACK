@@ -1,12 +1,13 @@
-﻿/**
+/**
  * @file lv_drv_conf.h
- * Configuration file for v7.11.0
+ * Configuration file for v8.2.0
  */
 
 /*
  * COPY THIS FILE AS lv_drv_conf.h
  */
 
+/* clang-format off */
 #if 1 /*Set it to "1" to enable the content*/
 
 #ifndef LV_DRV_CONF_H
@@ -85,7 +86,7 @@
 
 /* SDL based drivers for display, mouse, mousewheel and keyboard*/
 #ifndef USE_SDL
-# define USE_SDL 01
+# define USE_SDL 1
 #endif
 
 /* Hardware accelerated SDL driver */
@@ -121,8 +122,8 @@
 #endif
 
 #if USE_MONITOR
-#  define MONITOR_HOR_RES     LV_HOR_RES
-#  define MONITOR_VER_RES     LV_VER_RES
+#  define MONITOR_HOR_RES     480
+#  define MONITOR_VER_RES     320
 
 /* Scale window by this factor (useful when simulating small screens) */
 #  define MONITOR_ZOOM        1
@@ -177,9 +178,18 @@
 #endif
 
 #if USE_WAYLAND
-#  define WAYLAND_HOR_RES      480
-#  define WAYLAND_VER_RES      320
-#  define WAYLAND_SURF_TITLE   "LVGL"
+/* Support for client-side decorations */
+#  ifndef LV_WAYLAND_CLIENT_SIDE_DECORATIONS
+#    define LV_WAYLAND_CLIENT_SIDE_DECORATIONS 1
+#  endif
+/* Support for (deprecated) wl-shell protocol */
+#  ifndef LV_WAYLAND_WL_SHELL
+#    define LV_WAYLAND_WL_SHELL 1
+#  endif
+/* Support for xdg-shell protocol */
+#  ifndef LV_WAYLAND_XDG_SHELL
+#    define LV_WAYLAND_XDG_SHELL 0
+#  endif
 #endif
 
 /*----------------
@@ -306,7 +316,7 @@
  *  Linux frame buffer device (/dev/fbx)
  *-----------------------------------------*/
 #ifndef USE_FBDEV
-#  define USE_FBDEV           0
+#  define USE_FBDEV           1
 #endif
 
 #if USE_FBDEV
@@ -386,6 +396,7 @@
 /*---------------------------------------
  * Mouse or touchpad on PC (using SDL)
  *-------------------------------------*/
+/*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSE
 #  define USE_MOUSE           0
 #endif
@@ -397,6 +408,7 @@
 /*-------------------------------------------
  * Mousewheel as encoder on PC (using SDL)
  *------------------------------------------*/
+/*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSEWHEEL
 #  define USE_MOUSEWHEEL      0
 #endif
@@ -406,21 +418,28 @@
 #endif
 
 /*-------------------------------------------------
- * Touchscreen as libinput interface (for Linux based systems)
+ * Touchscreen, mouse/touchpad or keyboard as libinput interface (for Linux based systems)
  *------------------------------------------------*/
 #ifndef USE_LIBINPUT
 #  define USE_LIBINPUT           0
 #endif
 
-#if USE_LIBINPUT
+#ifndef USE_BSD_LIBINPUT
+#  define USE_BSD_LIBINPUT       0
+#endif
+
+#if USE_LIBINPUT || USE_BSD_LIBINPUT
+/*If only a single device of the same type is connected, you can also auto detect it, e.g.:
+ *#define LIBINPUT_NAME   libinput_find_dev(LIBINPUT_CAPABILITY_TOUCH, false)*/
 #  define LIBINPUT_NAME   "/dev/input/event0"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
-#endif  /*USE_LIBINPUT*/
+
+#endif  /*USE_LIBINPUT || USE_BSD_LIBINPUT*/
 
 /*-------------------------------------------------
  * Mouse or touchpad as evdev interface (for Linux based systems)
  *------------------------------------------------*/
 #ifndef USE_EVDEV
-#  define USE_EVDEV           0
+#  define USE_EVDEV           1
 #endif
 
 #ifndef USE_BSD_EVDEV
@@ -428,7 +447,7 @@
 #endif
 
 #if USE_EVDEV || USE_BSD_EVDEV
-#  define EVDEV_NAME   "/dev/input/event0"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
+#  define EVDEV_NAME   "/dev/input/event10"        /*You can use the "evtest" Linux tool to get the list of devices and test them*/
 #  define EVDEV_SWAP_AXES         0               /*Swap the x and y axes of the touchscreen*/
 
 #  define EVDEV_CALIBRATE         0               /*Scale and offset the touchscreen coordinates by using maximum and minimum values for each axis*/
@@ -441,9 +460,27 @@
 #  endif  /*EVDEV_CALIBRATE*/
 #endif  /*USE_EVDEV*/
 
+/*-------------------------------------------------
+ * Full keyboard support for evdev and libinput interface
+ *------------------------------------------------*/
+#  ifndef USE_XKB
+#    define USE_XKB           0
+#  endif
+
+#if USE_LIBINPUT || USE_BSD_LIBINPUT || USE_EVDEV || USE_BSD_EVDEV
+#  if USE_XKB
+#    define XKB_KEY_MAP       { .rules = NULL, \
+                                .model = "pc101", \
+                                .layout = "us", \
+                                .variant = NULL, \
+                                .options = NULL } /*"setxkbmap -query" can help find the right values for your keyboard*/
+#  endif  /*USE_XKB*/
+#endif  /*USE_LIBINPUT || USE_BSD_LIBINPUT || USE_EVDEV || USE_BSD_EVDEV*/
+
 /*-------------------------------
  *   Keyboard of a PC (using SDL)
  *------------------------------*/
+/*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_KEYBOARD
 #  define USE_KEYBOARD        0
 #endif

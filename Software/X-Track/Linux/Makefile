@@ -20,7 +20,7 @@ WARNINGS_CFG ?= -Wall -Wextra \
 INCLUDE_CFG = -I$(LVGL_DIR)/ -I$(PROJECT_DIR)/USER/App -I$(PROJECT_DIR)/USER/App/Utils/ArduinoJson/src
 
 CFLAGS ?= 	-O3 -g0 $(INCLUDE_CFG) $(WARNING_CFG) \
-			-DLV_COLOR_DEPTH=32 -DLV_COLOR_16_SWAP=0 -DLV_FS_PC_PATH=\"../../../\" \
+			-DLV_COLOR_DEPTH=32 -DLV_COLOR_16_SWAP=0 \
 			-DCONFIG_MAP_EXT_NAME_DEFAULT=\"png\"
 CXXFLAGS ?= $(CFLAGS)
 LDFLAGS ?= -lm -lstdc++ -lSDL2
@@ -32,7 +32,6 @@ MAINSRC = ./main.cpp
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk
 
-CSRCS += $(shell find -L $(LVGL_DIR)/lv_fs_if -name "*.c")
 CSRCS += $(shell find -L $(PROJECT_DIR)/USER/App -name "*.c")
 CXXSRCS += $(shell find -L $(LVGL_DIR)/HAL -name "*.cpp")
 

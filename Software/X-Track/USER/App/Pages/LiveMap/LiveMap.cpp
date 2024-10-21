@@ -1,5 +1,6 @@
 #include "LiveMap.h"
 #include "Config/Config.h"
+#include <cstdio>
 
 using namespace Page;
 
