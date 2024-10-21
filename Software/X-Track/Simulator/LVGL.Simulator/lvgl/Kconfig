@@ -6,7 +6,7 @@ menu "LVGL configuration"
     # without lv_conf.h file, the lv_conf_internal.h and
     # lv_conf_kconfig.h files are used instead.
     config LV_CONF_SKIP
-        bool
+        bool "Uncheck this to use custom lv_conf.h"
         default y
 
     config LV_CONF_MINIMAL
@@ -219,7 +219,7 @@ menu "LVGL configuration"
                 default n
                 help
                     Must deploy arm-2d library to your project and add include PATH for "arm_2d.h".
-                
+
             config LV_USE_GPU_STM32_DMA2D
                 bool "Enable STM32 DMA2D (aka Chrom Art) GPU."
             config LV_GPU_DMA2D_CMSIS_INCLUDE
@@ -239,7 +239,7 @@ menu "LVGL configuration"
                 help
                     Must be defined to include path of CMSIS header of target processor
                     e.g. "SWM341.h"
-                    
+
             config LV_USE_GPU_NXP_PXP
                 bool "Use NXP's PXP GPU iMX RTxxx platforms."
             config LV_USE_GPU_NXP_PXP_AUTO_INIT
@@ -265,6 +265,12 @@ menu "LVGL configuration"
                 string "include path of SDL header"
                 depends on LV_USE_GPU_SDL
                 default "SDL2/SDL.h"
+            config LV_GPU_SDL_LRU_SIZE
+                int "Maximum buffer size to allocate for rotation"
+                depends on LV_USE_GPU_SDL
+                default 8388608
+                help
+                    Texture cache size, 8MB by default.
         endmenu
 
         menu "Logging"
@@ -649,6 +655,10 @@ menu "LVGL configuration"
                 Set the pixel order of the display.
                 Important only if "subpx fonts" are used.
                 With "normal" font it doesn't matter.
+
+        config LV_USE_FONT_PLACEHOLDER
+            bool "Enable drawing placeholders when glyph dsc is not found."
+            default y
     endmenu
 
     menu "Text Settings"
@@ -1003,15 +1013,44 @@ menu "LVGL configuration"
 
         config LV_USE_GRIDNAV
             bool "Enable grid navigation"
-            default n 
+            default n
 
         config LV_USE_FRAGMENT
             bool "Enable lv_obj fragment"
-            default n 
+            default n
 
         config LV_USE_IMGFONT
             bool "draw img in label or span obj"
             default n
+
+        config LV_USE_MSG
+            bool "Enable a published subscriber based messaging system"
+            default n
+
+        config LV_USE_IME_PINYIN
+            bool "Enable Pinyin input method"
+            default n
+        config LV_IME_PINYIN_USE_K9_MODE
+            bool "Enable Pinyin input method 9 key input mode"
+            depends on LV_USE_IME_PINYIN
+            default n
+        config LV_IME_PINYIN_K9_CAND_TEXT_NUM
+            int "Maximum number of candidate panels for 9-key input mode"
+            depends on LV_IME_PINYIN_USE_K9_MODE
+            default 3
+        config LV_IME_PINYIN_USE_DEFAULT_DICT
+            bool "Use built-in Thesaurus"
+            depends on LV_USE_IME_PINYIN
+            default y
+            help
+                If you do not use the default thesaurus, be sure to use lv_ime_pinyin after setting the thesauruss
+        config LV_IME_PINYIN_CAND_TEXT_NUM
+            int "Maximum number of candidate panels"
+            depends on LV_USE_IME_PINYIN
+            default 6
+            help
+                Set the maximum number of candidate panels that can be displayed.
+                This needs to be adjusted according to the size of the screen.
     endmenu
 
     menu "Examples"
@@ -1035,6 +1074,10 @@ menu "LVGL configuration"
 
         config LV_USE_DEMO_BENCHMARK
             bool "Benchmark your system"
+            default n
+        config LV_DEMO_BENCHMARK_RGB565A8
+            bool "Use RGB565A8 images with 16 bit color depth instead of ARGB8565"
+            depends on LV_USE_DEMO_BENCHMARK
             default n
 
         config LV_USE_DEMO_STRESS

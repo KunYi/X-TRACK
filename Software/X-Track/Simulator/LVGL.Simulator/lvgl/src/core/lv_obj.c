@@ -35,8 +35,7 @@
 #endif
 
 #if LV_USE_GPU_NXP_PXP && LV_USE_GPU_NXP_PXP_AUTO_INIT
-    #include "../gpu/lv_gpu_nxp_pxp.h"
-    #include "../gpu/lv_gpu_nxp_pxp_osa.h"
+    #include "../draw/nxp/pxp/lv_gpu_nxp_pxp.h"
 #endif
 
 /*********************
@@ -126,10 +125,7 @@ void lv_init(void)
 #endif
 
 #if LV_USE_GPU_NXP_PXP && LV_USE_GPU_NXP_PXP_AUTO_INIT
-    if(lv_gpu_nxp_pxp_init(&pxp_default_cfg) != LV_RES_OK) {
-        LV_LOG_ERROR("PXP init error. STOP.\n");
-        for(; ;) ;
-    }
+    PXP_COND_STOP(!lv_gpu_nxp_pxp_init(), "PXP init failed.");
 #endif
 
     _lv_obj_style_init();
@@ -882,7 +878,7 @@ static void lv_obj_set_state(lv_obj_t * obj, lv_state_t new_state)
         if(obj_style->is_trans) continue;
 
         lv_style_value_t v;
-        if(lv_style_get_prop_inlined(obj_style->style, LV_STYLE_TRANSITION, &v) == false) continue;
+        if(lv_style_get_prop_inlined(obj_style->style, LV_STYLE_TRANSITION, &v) != LV_STYLE_RES_FOUND) continue;
         const lv_style_transition_dsc_t * tr = v.ptr;
 
         /*Add the props to the set if not added yet or added but with smaller weight*/

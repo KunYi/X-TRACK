@@ -96,7 +96,7 @@
     #ifdef CONFIG_LV_COLOR_MIX_ROUND_OFS
         #define LV_COLOR_MIX_ROUND_OFS CONFIG_LV_COLOR_MIX_ROUND_OFS
     #else
-        #define LV_COLOR_MIX_ROUND_OFS (LV_COLOR_DEPTH == 32 ? 0: 128)
+        #define LV_COLOR_MIX_ROUND_OFS 0
     #endif
 #endif
 
@@ -317,8 +317,6 @@
  * and blend it as an image with the given opacity.
  * Note that `bg_opa`, `text_opa` etc don't require buffering into layer)
  * The widget can be buffered in smaller chunks to avoid using large buffers.
- * `draw_area` (`lv_area_t` meaning the area to draw and `px_size` (size of a pixel in bytes)
- * can be used the set the buffer size adaptively.
  *
  * - LV_LAYER_SIMPLE_BUF_SIZE: [bytes] the optimal target buffer size. LVGL will try to allocate it
  * - LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE: [bytes]  used if `LV_LAYER_SIMPLE_BUF_SIZE` couldn't be allocated.
@@ -338,7 +336,7 @@
     #ifdef CONFIG_LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE
         #define LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE CONFIG_LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE
     #else
-        #define LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE LV_MAX(lv_area_get_width(&draw_area) * px_size, 2048)
+        #define LV_LAYER_SIMPLE_FALLBACK_BUF_SIZE (3 * 1024)
     #endif
 #endif
 
@@ -1224,6 +1222,19 @@
         #else
             #define LV_FONT_SUBPX_BGR 0  /*0: RGB; 1:BGR order*/
         #endif
+    #endif
+#endif
+
+/*Enable drawing placeholders when glyph dsc is not found*/
+#ifndef LV_USE_FONT_PLACEHOLDER
+    #ifdef _LV_KCONFIG_PRESENT
+        #ifdef CONFIG_LV_USE_FONT_PLACEHOLDER
+            #define LV_USE_FONT_PLACEHOLDER CONFIG_LV_USE_FONT_PLACEHOLDER
+        #else
+            #define LV_USE_FONT_PLACEHOLDER 0
+        #endif
+    #else
+        #define LV_USE_FONT_PLACEHOLDER 1
     #endif
 #endif
 
@@ -2245,6 +2256,62 @@
     #endif
 #endif
 
+/*1: Enable Pinyin input method*/
+/*Requires: lv_keyboard*/
+#ifndef LV_USE_IME_PINYIN
+    #ifdef CONFIG_LV_USE_IME_PINYIN
+        #define LV_USE_IME_PINYIN CONFIG_LV_USE_IME_PINYIN
+    #else
+        #define LV_USE_IME_PINYIN 0
+    #endif
+#endif
+#if LV_USE_IME_PINYIN
+    /*1: Use default thesaurus*/
+    /*If you do not use the default thesaurus, be sure to use `lv_ime_pinyin` after setting the thesauruss*/
+    #ifndef LV_IME_PINYIN_USE_DEFAULT_DICT
+        #ifdef _LV_KCONFIG_PRESENT
+            #ifdef CONFIG_LV_IME_PINYIN_USE_DEFAULT_DICT
+                #define LV_IME_PINYIN_USE_DEFAULT_DICT CONFIG_LV_IME_PINYIN_USE_DEFAULT_DICT
+            #else
+                #define LV_IME_PINYIN_USE_DEFAULT_DICT 0
+            #endif
+        #else
+            #define LV_IME_PINYIN_USE_DEFAULT_DICT 1
+        #endif
+    #endif
+    /*Set the maximum number of candidate panels that can be displayed*/
+    /*This needs to be adjusted according to the size of the screen*/
+    #ifndef LV_IME_PINYIN_CAND_TEXT_NUM
+        #ifdef CONFIG_LV_IME_PINYIN_CAND_TEXT_NUM
+            #define LV_IME_PINYIN_CAND_TEXT_NUM CONFIG_LV_IME_PINYIN_CAND_TEXT_NUM
+        #else
+            #define LV_IME_PINYIN_CAND_TEXT_NUM 6
+        #endif
+    #endif
+
+    /*Use 9 key input(k9)*/
+    #ifndef LV_IME_PINYIN_USE_K9_MODE
+        #ifdef _LV_KCONFIG_PRESENT
+            #ifdef CONFIG_LV_IME_PINYIN_USE_K9_MODE
+                #define LV_IME_PINYIN_USE_K9_MODE CONFIG_LV_IME_PINYIN_USE_K9_MODE
+            #else
+                #define LV_IME_PINYIN_USE_K9_MODE 0
+            #endif
+        #else
+            #define LV_IME_PINYIN_USE_K9_MODE      1
+        #endif
+    #endif
+    #if LV_IME_PINYIN_USE_K9_MODE == 1
+        #ifndef LV_IME_PINYIN_K9_CAND_TEXT_NUM
+            #ifdef CONFIG_LV_IME_PINYIN_K9_CAND_TEXT_NUM
+                #define LV_IME_PINYIN_K9_CAND_TEXT_NUM CONFIG_LV_IME_PINYIN_K9_CAND_TEXT_NUM
+            #else
+                #define LV_IME_PINYIN_K9_CAND_TEXT_NUM 3
+            #endif
+        #endif
+    #endif // LV_IME_PINYIN_USE_K9_MODE
+#endif
+
 /*==================
 * EXAMPLES
 *==================*/
@@ -2300,6 +2367,16 @@
     #else
         #define LV_USE_DEMO_BENCHMARK 0
     #endif
+#endif
+#if LV_USE_DEMO_BENCHMARK
+/*Use RGB565A8 images with 16 bit color depth instead of ARGB8565*/
+#ifndef LV_DEMO_BENCHMARK_RGB565A8
+    #ifdef CONFIG_LV_DEMO_BENCHMARK_RGB565A8
+        #define LV_DEMO_BENCHMARK_RGB565A8 CONFIG_LV_DEMO_BENCHMARK_RGB565A8
+    #else
+        #define LV_DEMO_BENCHMARK_RGB565A8 0
+    #endif
+#endif
 #endif
 
 /*Stress test for LVGL*/
