@@ -25,7 +25,6 @@ static void hal_init(const char* evdev_path)
     sdl_init();
 
     /*Create a display buffer*/
-    static lv_disp_draw_buf_t disp_buf1;
     static uint32_t disp_buf_size = SDL_HOR_RES * SDL_VER_RES;
     lv_color_t* buf = (lv_color_t*)malloc(disp_buf_size * sizeof(lv_color_t));
 
