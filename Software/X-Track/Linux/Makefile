@@ -23,7 +23,8 @@ CFLAGS ?= 	-O3 -g0 $(INCLUDE_CFG) $(WARNING_CFG) \
 			-DLV_COLOR_DEPTH=32 -DLV_COLOR_16_SWAP=0 \
 			-DCONFIG_MAP_EXT_NAME_DEFAULT=\"png\"
 CXXFLAGS ?= $(CFLAGS)
-LDFLAGS ?= -lm -lstdc++ -lSDL2
+#LDFLAGS ?= -lm -lstdc++ -lSDL2 -lavformat -lavcodec -lavutil -lswscale -lavdevice
+LDFLAGS ?= -lm -lstdc++ -lSDL2 -lavformat -lavcodec -lavutil -lswscale
 BIN = xtrack
 
 #Collect the files to compile

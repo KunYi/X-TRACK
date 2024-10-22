@@ -63,17 +63,7 @@
 /**********************
  *      TYPEDEFS
  **********************/
-typedef struct {
-    SDL_Window * window;
-    SDL_Renderer * renderer;
-    SDL_Texture * texture;
-    volatile bool sdl_refr_qry;
-#if SDL_DOUBLE_BUFFERED
-    uint32_t * tft_fb_act;
-#else
-    uint32_t * tft_fb;
-#endif
-}monitor_t;
+#include "monitor.h"
 
 /**********************
  *  STATIC PROTOTYPES
@@ -96,6 +86,8 @@ monitor_t monitor;
 #if SDL_DUAL_DISPLAY
 monitor_t monitor2;
 #endif
+
+#include "ffmpeg.h"
 
 static volatile bool sdl_inited = false;
 
@@ -293,6 +285,7 @@ static void sdl_event_handler(lv_timer_t * t)
 
     /*Run until quit event not arrives*/
     if(sdl_quit_qry) {
+        ffmpeg_close();
         monitor_sdl_clean_up();
         exit(0);
     }
@@ -361,7 +354,7 @@ static void window_create(monitor_t * m)
     m->tft_fb = (uint32_t *)malloc(sizeof(uint32_t) * SDL_HOR_RES * SDL_VER_RES);
     memset(m->tft_fb, 0x44, SDL_HOR_RES * SDL_VER_RES * sizeof(uint32_t));
 #endif
-
+    ffmpeg_init(SDL_HOR_RES, SDL_VER_RES, "test.mp4");
     m->sdl_refr_qry = true;
 
 }
@@ -386,6 +379,7 @@ static void window_update(monitor_t * m)
     /*Update the renderer with the texture containing the rendered image*/
     SDL_RenderCopy(m->renderer, m->texture, NULL, NULL);
     SDL_RenderPresent(m->renderer);
+    capture(SDL_HOR_RES, SDL_VER_RES, m);
 }
 
 #endif /*USE_MONITOR || USE_SDL*/
