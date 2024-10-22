@@ -294,7 +294,7 @@ void LiveMap::MapTileContReload()
 
         char path[256];
         Model.mapConv.ConvertMapPath(pos.x, pos.y, path, sizeof(path));
-        printf("[DBG] Tile:%s\n", path);
+        // printf("[DBG] Tile:%s\n", path);
         View.SetMapTileSrc(i, path);
     }
 }
