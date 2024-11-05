@@ -2,8 +2,15 @@
 
 ## 编译
 
+使用 make
 ```sh
-make -j
+make -jN　# N 是整数，代表使用多少任务进行平行编译，一般为系统核心数目
+```
+
+使用 cmake & ninja
+```sh
+cmake -B build -S . -GNinja
+cmake --build build
 ```
 
 ## 执行
